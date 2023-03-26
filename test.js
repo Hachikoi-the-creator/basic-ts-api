@@ -1,5 +1,5 @@
-export default function getRandomNumber(existingNums: number[]): number {
-  let nonCollideNum = existingNums[0] || 13;
+function getRandomNumber(existingNums) {
+  let nonCollideNum = 0;
   let exp = 100;
   let counter = 0;
 
@@ -18,3 +18,8 @@ export default function getRandomNumber(existingNums: number[]): number {
 
   return nonCollideNum;
 }
+
+const testing = Array(40)
+  .fill(1)
+  .map((_) => getRandomNumber([0, 1, 2]));
+console.log(testing);

@@ -32,7 +32,9 @@ export function createOneNG(taskData: UnknownTask): TaskT | 0 {
   const { text, day, reminder } = taskData as TaskT;
 
   const existingIds = itemsArr.map((e) => e.id);
+
   const rndId = getRandomNumber(existingIds);
+  console.log("testin uniquense controller", existingIds, rndId);
   const newTask = { id: rndId, text, day, reminder };
 
   itemsArr.push(newTask);

@@ -1,9 +1,10 @@
 import { Router } from "express";
 import {
-  addOneVUE,
+  createOneVUE,
   deleteOneVUE,
   getAllVUE,
   getOneVUE,
+  updateOneVUE,
 } from "../controllers/vueControllers";
 
 const vueRouter = Router();
@@ -16,25 +17,39 @@ vueRouter.get("/", (req, res) => {
 vueRouter.get("/:id", (req, res) => {
   const id: undefined | string = req.params.id;
   const numId: number = +id;
-  const allTasks = getOneVUE(numId);
 
-  res.status(201).send(allTasks || "naur-found");
+  const foundTask = getOneVUE(numId);
+
+  res.status(200).send(foundTask || "naur-found");
 });
 
 vueRouter.post("/", (req, res) => {
   // can't find a better way to make this other than any :c
   const taskData: any = req.body;
   const { text, day, reminder } = taskData;
-  const addedTask = addOneVUE({ text, day, reminder });
+  const addedTask = createOneVUE({ text, day, reminder });
 
   res.status(201).send(addedTask || "invalid/missing-data");
 });
 
-vueRouter.delete("/:id", (req, res) => {
-  const { id } = req.params;
-  const deletedTask = deleteOneVUE(id);
+// update
+vueRouter.put("/:id", (req, res) => {
+  const id: undefined | string = req.params.id;
+  const taskData = req.body;
+  const numId: number = +id;
 
-  res.status(201).send(deletedTask || "naur-found");
+  const updatedTask = updateOneVUE(numId, taskData);
+
+  res.status(200).send(updatedTask || "naur-found-update");
+});
+
+vueRouter.delete("/:id", (req, res) => {
+  const id: undefined | string = req.params.id;
+  const numId: number = +id;
+  const deletedTask = deleteOneVUE(numId);
+
+  res.status(201).send(deletedTask || "naur-found-delete");
+  // res.send(allTasks); even tho allTask could have been 0 but got no TS error...
 });
 
 export default vueRouter;

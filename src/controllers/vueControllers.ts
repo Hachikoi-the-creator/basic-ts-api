@@ -2,38 +2,74 @@
 import pseudoDb, { TaskT } from "../pseudoDb";
 import { UnknownTask } from "../types/ClientReq";
 import getRandomNumber from "../utils/getRandom";
+import { validTaskAttrs } from "../utils/taskValidators";
+
 const itemsArr: TaskT[] = pseudoDb.vue;
 
+// * GET ALL
 export function getAllVUE(): TaskT[] | [] {
   return itemsArr;
 }
 
-// if wrong id, returns 0
-export function getOneVUE(id: unknown): TaskT | 0 {
-  // even tho i got a number, could be invalid id
-  if (typeof id === "number") return itemsArr.find((e) => e.id === id) || 0;
+// * GET 1
+export function getOneVUE(id: number): TaskT | 0 {
+  // if wrong id, returns 0
+  if (typeof id === "number") {
+    // even tho i got a number, could be invalid id
+    const foundTask = itemsArr.find((e) => e.id === id);
+    return foundTask?.day ? foundTask : 0;
+  }
+
   return 0;
 }
 
-export function addOneVUE(taskData: UnknownTask): TaskT | 0 {
+// * CREATE/ADD 1
+export function createOneVUE(taskData: UnknownTask): TaskT | 0 {
   // any of those is undefined return 0
-  const { text, day, reminder } = taskData;
-  const validInputs =
-    typeof text === "string" &&
-    typeof day === "string" &&
-    typeof reminder === "boolean";
-  if (!validInputs) return 0;
+  if (!validTaskAttrs(taskData)) return 0;
+
+  // im sure it is a valid task because of the if above
+  const { text, day, reminder } = taskData as TaskT;
 
   const existingIds = itemsArr.map((e) => e.id);
   const rndId = getRandomNumber(existingIds);
   const newTask = { id: rndId, text, day, reminder };
+
   itemsArr.push(newTask);
 
   return newTask;
 }
 
+// * DELETE 1
+export function updateOneVUE(id: number, taskUptData: TaskT): TaskT | 0 {
+  let wasFound: boolean = false;
+
+  itemsArr.forEach((task) => {
+    if (task.id === id) {
+      // not as good lookinng but huge perfomance improvements
+      if (validTaskAttrs(taskUptData)) {
+        // does indeed work by refenrece & did not like the splice!
+        task.text = taskUptData.text;
+        task.reminder = taskUptData.reminder;
+        task.day = taskUptData.day;
+        wasFound = true;
+      }
+    }
+  });
+
+  return wasFound
+    ? {
+        id,
+        text: taskUptData.text,
+        reminder: taskUptData.reminder,
+        day: taskUptData.day,
+      }
+    : 0;
+}
+
+// * DELETE 1
 // if wrong id returns 0
-export function deleteOneVUE(id: unknown): TaskT | 0 {
+export function deleteOneVUE(id: number): TaskT | 0 {
   const removeIdx = itemsArr.findIndex((e) => e.id === id);
   const foundTask = itemsArr.splice(removeIdx, 1);
 
