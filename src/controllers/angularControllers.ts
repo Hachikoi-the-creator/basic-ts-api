@@ -1,5 +1,8 @@
 // ! ---- ANGULAR CONTROLLERS ----
 import pseudoDb, { TaskT } from "../pseudoDb";
+import { UnknownTask } from "../types/ClientReq";
+import getRandomNumber from "../utils/getRandom";
+
 const itemsArr: TaskT[] = pseudoDb.angular;
 
 export function getAllNG(): TaskT[] | [] {
@@ -15,6 +18,23 @@ export function getOneNG(id: unknown): TaskT | 0 {
   }
 
   return 0;
+}
+
+export function addOneNG(taskData: UnknownTask): TaskT | 0 {
+  // any of those is undefined return 0
+  const { text, day, reminder } = taskData;
+  const validInputs =
+    typeof text === "string" &&
+    typeof day === "string" &&
+    typeof reminder === "boolean";
+  if (!validInputs) return 0;
+
+  const existingIds = itemsArr.map((e) => e.id);
+  const rndId = getRandomNumber(existingIds);
+  const newTask = { id: rndId, text, day, reminder };
+  itemsArr.push(newTask);
+
+  return newTask;
 }
 
 // if wrong id returns 0
