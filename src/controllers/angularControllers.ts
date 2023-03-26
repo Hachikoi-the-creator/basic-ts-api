@@ -42,21 +42,29 @@ export function createOneNG(taskData: UnknownTask): TaskT | 0 {
 
 // * DELETE 1
 export function updateOneNG(id: number, taskUptData: TaskT): TaskT | 0 {
-  let toUpdateTask: TaskT = { id: 0, text: "", day: "", reminder: false };
-  let toUpdateIdx: number = -99;
+  let wasFound: boolean = false;
 
-  itemsArr.forEach((task, idx) => {
+  itemsArr.forEach((task) => {
     if (task.id === id) {
-      toUpdateTask = task;
-      toUpdateIdx = idx;
+      // not as good lookinng but huge perfomance improvements
+      if (validTaskAttrs(taskUptData)) {
+        // does indeed work by refenrece & did not like the splice!
+        task.text = taskUptData.text;
+        task.reminder = taskUptData.reminder;
+        task.day = taskUptData.day;
+        wasFound = true;
+      }
     }
   });
 
-  const invalidInputsOrIndex = !validTaskAttrs(taskUptData) || !toUpdateIdx;
-  if (invalidInputsOrIndex) return 0;
-
-  itemsArr.splice(toUpdateIdx, 1, toUpdateTask);
-  return toUpdateTask;
+  return wasFound
+    ? {
+        id,
+        text: taskUptData.text,
+        reminder: taskUptData.reminder,
+        day: taskUptData.day,
+      }
+    : 0;
 }
 
 // * DELETE 1
