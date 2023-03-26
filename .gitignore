@@ -1,4 +1,12 @@
+# lock files
 bun.lockb
 package-lock.json
+
+# secrets
 .env
-node_modules
+
+# death star
+node_modules/
+
+# compiled ts
+build/
