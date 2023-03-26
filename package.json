@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tsc": "tsc src/app.ts",
+    "tsc": "tsc s- src/app.ts -p tsconfig.json",
     "dev": "ts-node-dev src/app.ts",
     "type-check": "tsc . --noEmit",
     "start": "tsc src/app.ts && node build/index.js"
